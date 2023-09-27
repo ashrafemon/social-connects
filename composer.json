@@ -1,0 +1,31 @@
+{
+  "name": "leafwrap/social-connects",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Leafwrap\\SocialConnects\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Ashraf Emon",
+      "email": "ashraf.emon143@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "optimize-autoloader": true
+  },
+  "require": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Leafwrap\\SocialConnects\\SocialConnectServiceProvider"
+      ]
+    }
+  }
+}
