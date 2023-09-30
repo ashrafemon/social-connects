@@ -16,7 +16,7 @@ class SocialGatewayController extends Controller
     {
         try {
             $offset    = request()->input('offset') ?? 15;
-            $fields    = ['id', 'type', 'gateway', 'credentials', 'additional', 'status'];
+            $fields    = ['id', 'gateway', 'credentials', 'additional', 'status'];
             $condition = [];
 
             $query = SocialGateway::query();
