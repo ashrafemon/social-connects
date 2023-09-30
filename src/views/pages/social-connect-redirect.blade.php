@@ -62,7 +62,11 @@
                                 headers: {
                                     Accept: 'application/json',
                                     'Content-Type': 'application/json'
-                                }
+                                },
+                                body: JSON.stringify({
+                                    gateway: this.gateway,
+                                    code: this.code
+                                })
                             })
                         .then(res => res.json())
                         .then(async (res) => {
@@ -78,14 +82,14 @@
                             this.completed = true;
 
                             let ipnCall = await fetch(
-                                `${window.origin}/api/v1/assign-plan`, {
+                                `${window.origin}/api/v1/oauth-login`, {
                                     method: "POST",
                                     headers: {
                                         Accept: 'application/json',
                                         'Content-Type': 'application/json'
                                     },
                                     body: JSON.stringify({
-                                        transaction_id: this.transactionId
+                                        user: res.data
                                     })
                                 });
                         })

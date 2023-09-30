@@ -10,34 +10,36 @@ class SocialConnectService extends BaseService
     {
         try {
             BaseService::$gateway = strtolower($gateway);
-            $this->verifyCredentials();
+            $this->setFeedback($this->verifyCredentials());
         } catch (Exception $e) {
         }
     }
 
     public function connect()
     {
-        if (!BaseService::$socialFeedback['isError']) {
+        if (BaseService::$socialFeedback['isError']) {
             return;
         }
 
         if (!$service = $this->getSocialProvider()) {
-            return $this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found');
+            $this->setFeedback($this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found'));
+            return;
         }
 
-        $service->authRequest();
+        $this->setFeedback($service->authRequest());
     }
 
     public function user($code)
     {
-        if (!BaseService::$socialFeedback['isError']) {
+        if (BaseService::$socialFeedback['isError']) {
             return;
         }
 
         if (!$service = $this->getSocialProvider()) {
-            return $this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found');
+            $this->setFeedback($this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found'));
+            return;
         }
 
-        $service->authResponse($code);
+        $this->setFeedback($service->authResponse($code));
     }
 }

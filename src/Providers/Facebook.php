@@ -3,6 +3,7 @@
 namespace Leafwrap\SocialConnects\Providers;
 
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Leafwrap\SocialConnects\Contracts\ProviderContract;
 use Leafwrap\SocialConnects\Traits\Helper;
 
@@ -42,7 +43,7 @@ class Facebook extends BaseProvider implements ProviderContract
         $url .= "&scope=email";
         $url .= "&state={st=state123abc,ds=123456789}";
 
-        $this->leafwrapResponse(false, true, 'success', 200, 'Please redirect to this link', $url);
+        return $this->leafwrapResponse(false, true, 'success', 200, 'Please redirect to this link', $url);
     }
 
     public function authResponse($data)
@@ -55,16 +56,14 @@ class Facebook extends BaseProvider implements ProviderContract
             $url .= "&code={$data}";
 
             $client = Http::get($url);
-
-            if (!$client->successful) {
-                $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
-                return;
+            if (!$client->successful()) {
+                return $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
             }
 
             $payload = $client->json();
-            $this->getUserInfo($payload['access_token']);
+            return $this->getUserInfo($payload['access_token']);
         } catch (Exception $e) {
-            $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
+            return $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
         }
     }
 
@@ -78,14 +77,13 @@ class Facebook extends BaseProvider implements ProviderContract
 
             $client = Http::get($url);
 
-            if (!$client->successful) {
-                $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
-                return;
+            if (!$client->successful()) {
+                return $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
             }
 
-            $this->leafwrapResponse(false, true, 'success', 200, 'User information fetch successfully', $client->json());
+            return $this->leafwrapResponse(false, true, 'success', 200, 'User information fetch successfully', $this->userInfo($client->json(), 'facebook'));
         } catch (Exception $e) {
-            $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
+            return $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
         }
     }
 }
