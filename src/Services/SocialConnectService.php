@@ -17,7 +17,12 @@ class SocialConnectService extends BaseService
 
     public function connect()
     {
+        if (!BaseService::$socialFeedback['isError']) {
+            return;
+        }
+
         if (!$service = $this->getSocialProvider()) {
+            return $this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found');
         }
 
         $service->authRequest();
@@ -25,7 +30,12 @@ class SocialConnectService extends BaseService
 
     public function user($code)
     {
+        if (!BaseService::$socialFeedback['isError']) {
+            return;
+        }
+
         if (!$service = $this->getSocialProvider()) {
+            return $this->leafwrapResponse(true, false, 'error', 404, 'Social gateway not found');
         }
 
         $service->authResponse($code);

@@ -10,7 +10,7 @@ class SocialConnectServiceProvider extends ServiceProvider
     public function boot(Kernel $kernel)
     {
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
-        // $this->loadViewsFrom(__DIR__ . '/views', 'payment-deal');
+        $this->loadViewsFrom(__DIR__ . '/views', 'social-connects');
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
     }
 

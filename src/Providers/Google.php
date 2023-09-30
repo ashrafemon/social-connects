@@ -4,9 +4,12 @@ namespace Leafwrap\SocialConnects\Providers;
 
 use Exception;
 use Leafwrap\SocialConnects\Contracts\ProviderContract;
+use Leafwrap\SocialConnects\Traits\Helper;
 
 class Google extends BaseProvider implements ProviderContract
 {
+    use Helper;
+
     public function __construct($credentials)
     {
         $this->tokenizer($credentials);
@@ -16,18 +19,18 @@ class Google extends BaseProvider implements ProviderContract
     public function tokenizer($credentials)
     {
         $this->credentials = [
-            'appId'         => trim($credentials['client_id']),
-            'appSecret'     => trim($credentials['client_secret']),
-            'redirectUrl'   => trim($credentials['redirect_url'])
+            'appId'       => trim($credentials['client_id']),
+            'appSecret'   => trim($credentials['client_secret']),
+            'redirectUrl' => trim($credentials['redirect_url']),
         ];
     }
 
     public function urlGen()
     {
         $this->urls = [
-            'auth'      => 'https://accounts.google.com/o/oauth2/v2/auth',
-            'token'     => 'https://oauth2.googleapis.com/token',
-            'userInfo'  => 'https://www.googleapis.com/oauth2/v3/userinfo?access_token='
+            'auth'     => 'https://accounts.google.com/o/oauth2/v2/auth',
+            'token'    => 'https://oauth2.googleapis.com/token',
+            'userInfo' => 'https://www.googleapis.com/oauth2/v3/userinfo',
         ];
     }
 
@@ -41,7 +44,8 @@ class Google extends BaseProvider implements ProviderContract
         $url .= '&state=state_parameter_passthrough_value';
         $url .= "&redirect_uri={$this->credentials['redirectUrl']}";
         $url .= "&client_id={$this->credentials['appId']}";
-        return $url;
+
+        $this->leafwrapResponse(false, true, 'success', 200, 'Please redirect to this link', $url);
     }
 
     public function authResponse($data)
@@ -55,18 +59,31 @@ class Google extends BaseProvider implements ProviderContract
             $url .= "&grant_type=authorization_code";
 
             $client = Http::withHeaders(['Content-Type' => 'application/x-www-form-urlencoded'])->asForm()->post($url);
-            $payload = $client->json();
+            if (!$client->successful) {
+                $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
+                return;
+            }
 
+            $payload = $client->json();
             $this->getUserInfo($payload['access_token']);
         } catch (Exception $e) {
+            $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
         }
     }
 
     public function getUserInfo($key)
     {
         try {
-            $client = Http::get("{$this->urls['userInfo']}={$key}");
+            $client = Http::get("{$this->urls['userInfo']}?access_token={$key}");
+
+            if (!$client->successful) {
+                $this->leafwrapResponse(true, false, 'error', 400, 'Something went wrong', $client->json());
+                return;
+            }
+
+            $this->leafwrapResponse(false, true, 'success', 200, 'User information fetch successfully', $client->json());
         } catch (Exception $e) {
+            $this->leafwrapResponse(true, false, 'serverError', 400, $e->getMessage());
         }
     }
 }
