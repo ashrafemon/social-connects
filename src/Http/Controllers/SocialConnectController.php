@@ -5,6 +5,7 @@ namespace Leafwrap\SocialConnects\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Exception;
 use Leafwrap\SocialConnects\Facades\SocialConnect;
+use Leafwrap\SocialConnects\Models\SocialConnectTracker;
 use Leafwrap\SocialConnects\Traits\Helper;
 
 class SocialConnectController extends Controller
@@ -28,7 +29,25 @@ class SocialConnectController extends Controller
         }
     }
 
-    public function socialUser()
+    // public function socialUser()
+    // {
+    //     try {
+    //         $gateway = request()->input('gateway') ?? '';
+    //         $code    = request()->input('code') ?? '';
+
+    //         $res = SocialConnect::user($gateway, $code);
+
+    //         if ($res['isError']) {
+    //             return $this->leafwrapMessage($res['message'], $res['statusCode'], $res['status']);
+    //         }
+
+    //         return $this->leafwrapEntity($res['data'], $res['statusCode'], $res['status'], $res['message']);
+    //     } catch (Exception $e) {
+    //         return $this->leafwrapServerError($e);
+    //     }
+    // }
+
+    public function socialCallback()
     {
         try {
             $gateway = request()->input('gateway') ?? '';
@@ -40,7 +59,9 @@ class SocialConnectController extends Controller
                 return $this->leafwrapMessage($res['message'], $res['statusCode'], $res['status']);
             }
 
-            return $this->leafwrapEntity($res['data'], $res['statusCode'], $res['status'], $res['message']);
+            $tracker = SocialConnectTracker::query()->create(['gateway' => $gateway, 'code' => $code, 'response' => $res['data']]);
+            $url     = request()?->getSchemeAndHttpHost() . "/oauth-login?tracker_id={$tracker->unique_id}";
+            return redirect()->away($url);
         } catch (Exception $e) {
             return $this->leafwrapServerError($e);
         }

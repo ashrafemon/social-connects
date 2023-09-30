@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Social Connect Redirect</title>
+    <title>Social Connect Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
@@ -45,16 +45,15 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('socialConnects', () => ({
-                gateway: null,
-                code: null,
+                trackerId: null,
+                // code: null,
                 title: '',
                 loading: true,
                 completed: false,
 
                 async init() {
                     let url = new URLSearchParams(window.location.search)
-                    this.gateway = url.get('gateway')
-                    this.code = url.get('code')
+                    this.trackerId = url.get('tracker_id')
 
                     await fetch(
                             `${window.origin}/api/v1/social-connects/auth-user`, {
