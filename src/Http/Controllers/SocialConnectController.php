@@ -60,7 +60,7 @@ class SocialConnectController extends Controller
             }
 
             $tracker = SocialConnectTracker::query()->create(['gateway' => $gateway, 'code' => $code, 'response' => $res['data']]);
-            $url     = request()?->getSchemeAndHttpHost() . "/oauth-login?tracker_id={$tracker->unique_id}";
+            $url     = config('social-connects.frontend_url') . config('social-connects.login_url') . "?tracker_id={$tracker->unique_id}";
             return redirect()->away($url);
         } catch (Exception $e) {
             return $this->leafwrapServerError($e);

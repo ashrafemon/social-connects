@@ -11,6 +11,7 @@ class SocialConnectServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/views', 'social-connects');
+        $this->mergeConfigFrom(__DIR__ . '/config/social-connects.php', 'social-connects');
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
     }
 
