@@ -1,5 +1,6 @@
 {
   "name": "leafwrap/social-connects",
+  "description": "The SocialConnect OAuth Laravel Library is a powerful tool for seamless integration of OAuth-based authentication in Laravel applications. It streamlines the process, allowing users to log in using their preferred social media accounts securely.",
   "type": "library",
   "license": "MIT",
   "autoload": {
