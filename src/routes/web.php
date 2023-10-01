@@ -9,7 +9,6 @@ Route::middleware('api')->prefix('api/v1')->group(function () {
 
     Route::prefix('social-connects')->group(function () {
         Route::post('auth-request', [SocialConnectController::class, 'socialCall']);
-        // Route::post('auth-user', [SocialConnectController::class, 'socialUser']);
     });
 });
 

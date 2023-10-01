@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use Leafwrap\SocialConnects\Traits\Helper;
 
-class SocialGatewayRequest extends FormRequest
+class SocialConnectRequest extends FormRequest
 {
     use Helper;
 
@@ -30,10 +30,7 @@ class SocialGatewayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'gateway'     => 'sometimes|required|' . Rule::in(config('social-connects.gateways')),
-            'credentials' => 'sometimes|array',
-            'additional'  => 'sometimes|array',
-            'status'      => 'sometimes|required|boolean',
+            'gateway' => 'required|' . Rule::in(config('social-connects.gateways')),
         ];
     }
 
