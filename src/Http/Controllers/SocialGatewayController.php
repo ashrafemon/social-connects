@@ -25,6 +25,10 @@ class SocialGatewayController extends Controller
                 $condition['status'] = (int) request()->input('status');
             }
 
+            if (request()->has('gateway') && request()->input('gateway')) {
+                $condition['gateway'] = (int) request()->input('gateway');
+            }
+
             if (request()->has('get_all') && (int) request()->input('get_all') === 1) {
                 $query = $query->select($fields)->where($condition)->get();
             } else {
